@@ -5,6 +5,7 @@ import { ProgressBar } from "@/components/ProgressBar";
 import { QuestionCard } from "@/components/QuestionCard";
 import { ResultsScreen } from "@/components/ResultsScreen";
 import { useQuiz } from "@/hooks/useQuiz";
+import { QuestionMode } from "@/lib/quiz-utils";
 
 export default function Quiz() {
   const {
@@ -44,7 +45,7 @@ export default function Quiz() {
     return (
       <div className="min-h-screen py-8 px-4 bg-gray-50">
         <div className="max-w-2xl mx-auto">
-          <WelcomeScreen onStartQuiz={startQuiz} />
+          <WelcomeScreen onStartQuiz={(mode: QuestionMode) => startQuiz(mode)} />
         </div>
       </div>
     );
@@ -58,7 +59,7 @@ export default function Quiz() {
             results={state.results}
             onRestartQuiz={() => {
               resetQuiz();
-              startQuiz();
+              startQuiz('random');
             }}
             onGoHome={resetQuiz}
           />
