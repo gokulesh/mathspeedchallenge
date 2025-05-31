@@ -237,7 +237,7 @@
                         </div>
                         
                         <!-- Answer Input -->
-                        <div class="flex justify-center mb-8">
+                        <div class="flex flex-col items-center mb-8">
                             <input
                                 id="answer-input"
                                 type="number"
@@ -245,6 +245,9 @@
                                 placeholder="Enter answer here"
                                 onkeypress="handleKeyPress(event)"
                             />
+                            <div id="answer-error" class="text-red-500 mt-2 text-sm font-medium hidden">
+                                Please enter an answer!
+                            </div>
                         </div>
 
                         <!-- Submit Button -->
@@ -595,12 +598,14 @@ function stopQuestionTimer() {
 function submitAnswer() {
     const userAnswer = parseInt(document.getElementById('answer-input').value);
     const question = questions[currentQuestionIndex];
+    const errorElement = document.getElementById('answer-error');
     
     if (isNaN(userAnswer)) {
-        alert('Please enter a valid number!');
+        errorElement.classList.remove('hidden');
         return;
     }
     
+    errorElement.classList.add('hidden');
     const timeSpent = stopQuestionTimer();
     const isCorrect = userAnswer === question.answer;
     
