@@ -352,6 +352,49 @@ let timer = 0;
 let timerInterval = null;
 let questionStartTime = 0;
 let hasSubmitted = false;
+let selectedMode = 'random';
+
+// Pre-generated question sets
+const questionSets = {
+    beginner: [
+        { id: 1, question: "2 + 3", answer: 5, operation: "addition" },
+        { id: 2, question: "8 - 4", answer: 4, operation: "subtraction" },
+        { id: 3, question: "3 × 4", answer: 12, operation: "multiplication" },
+        { id: 4, question: "10 ÷ 2", answer: 5, operation: "division" },
+        { id: 5, question: "3²", answer: 9, operation: "square" },
+        { id: 6, question: "√16", answer: 4, operation: "sqrt" },
+        { id: 7, question: "5 + 7", answer: 12, operation: "addition" },
+        { id: 8, question: "15 - 6", answer: 9, operation: "subtraction" },
+        { id: 9, question: "2 × 8", answer: 16, operation: "multiplication" },
+        { id: 10, question: "21 ÷ 3", answer: 7, operation: "division" }
+    ],
+    
+    intermediate: [
+        { id: 1, question: "15 + 28", answer: 43, operation: "addition" },
+        { id: 2, question: "42 - 17", answer: 25, operation: "subtraction" },
+        { id: 3, question: "7 × 8", answer: 56, operation: "multiplication" },
+        { id: 4, question: "84 ÷ 12", answer: 7, operation: "division" },
+        { id: 5, question: "9²", answer: 81, operation: "square" },
+        { id: 6, question: "√144", answer: 12, operation: "sqrt" },
+        { id: 7, question: "36 + 19", answer: 55, operation: "addition" },
+        { id: 8, question: "73 - 28", answer: 45, operation: "subtraction" },
+        { id: 9, question: "11 × 6", answer: 66, operation: "multiplication" },
+        { id: 10, question: "96 ÷ 8", answer: 12, operation: "division" }
+    ],
+    
+    advanced: [
+        { id: 1, question: "47 + 68", answer: 115, operation: "addition" },
+        { id: 2, question: "91 - 39", answer: 52, operation: "subtraction" },
+        { id: 3, question: "12 × 11", answer: 132, operation: "multiplication" },
+        { id: 4, question: "144 ÷ 12", answer: 12, operation: "division" },
+        { id: 5, question: "15²", answer: 225, operation: "square" },
+        { id: 6, question: "√196", answer: 14, operation: "sqrt" },
+        { id: 7, question: "58 + 77", answer: 135, operation: "addition" },
+        { id: 8, question: "84 - 46", answer: 38, operation: "subtraction" },
+        { id: 9, question: "9 × 13", answer: 117, operation: "multiplication" },
+        { id: 10, question: "132 ÷ 11", answer: 12, operation: "division" }
+    ]
+};
 
 // Question Generation Functions
 function generateQuestion(operation) {
@@ -420,22 +463,37 @@ function generateQuestion(operation) {
     };
 }
 
-function generateQuestions(count = 10) {
-    const newQuestions = [];
-    const operations = ['addition', 'subtraction', 'multiplication', 'division', 'square', 'sqrt'];
-    
-    for (let i = 0; i < count; i++) {
-        const operation = operations[i % operations.length];
-        newQuestions.push(generateQuestion(operation));
+function generateQuestions(count = 10, mode = 'random') {
+    if (mode === 'random') {
+        // Original random generation
+        const newQuestions = [];
+        const operations = ['addition', 'subtraction', 'multiplication', 'division', 'square', 'sqrt'];
+        
+        for (let i = 0; i < count; i++) {
+            const operation = operations[i % operations.length];
+            newQuestions.push(generateQuestion(operation));
+        }
+        
+        // Shuffle the questions
+        for (let i = newQuestions.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [newQuestions[i], newQuestions[j]] = [newQuestions[j], newQuestions[i]];
+        }
+        
+        return newQuestions;
+    } else {
+        // Use pre-generated question set
+        const selectedSet = questionSets[mode];
+        const shuffled = [...selectedSet];
+        
+        // Shuffle the pre-generated questions
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        
+        return shuffled.slice(0, count);
     }
-    
-    // Shuffle the questions
-    for (let i = newQuestions.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [newQuestions[i], newQuestions[j]] = [newQuestions[j], newQuestions[i]];
-    }
-    
-    return newQuestions;
 }
 
 function formatTime(seconds) {
@@ -448,9 +506,30 @@ function formatTime(seconds) {
     }
 }
 
+// Mode Selection Functions
+function selectMode(mode) {
+    selectedMode = mode;
+    
+    // Update button styles
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.className = 'mode-btn p-4 rounded-xl border-2 border-gray-200 bg-white text-gray-600 hover:border-gray-300 transition-all';
+    });
+    
+    const selectedBtn = document.getElementById(`mode-${mode}`);
+    if (mode === 'random') {
+        selectedBtn.className = 'mode-btn p-4 rounded-xl border-2 border-blue-500 bg-blue-50 text-blue-600 transition-all';
+    } else if (mode === 'beginner') {
+        selectedBtn.className = 'mode-btn p-4 rounded-xl border-2 border-green-500 bg-green-50 text-green-600 transition-all';
+    } else if (mode === 'intermediate') {
+        selectedBtn.className = 'mode-btn p-4 rounded-xl border-2 border-yellow-500 bg-yellow-50 text-yellow-600 transition-all';
+    } else if (mode === 'advanced') {
+        selectedBtn.className = 'mode-btn p-4 rounded-xl border-2 border-red-500 bg-red-50 text-red-600 transition-all';
+    }
+}
+
 // Quiz Functions
 function startQuiz() {
-    questions = generateQuestions(10);
+    questions = generateQuestions(10, selectedMode);
     results = [];
     currentQuestionIndex = 0;
     
