@@ -69,23 +69,81 @@ export function generateQuestion(operation?: string): Question {
   };
 }
 
-export function generateQuestions(count: number = 10): Question[] {
-  const questions: Question[] = [];
-  const operations = ['addition', 'subtraction', 'multiplication', 'division', 'square', 'sqrt'];
+// Pre-generated question sets for consistent practice
+const questionSets = {
+  beginner: [
+    { id: 1, question: "2 + 3", answer: 5, operation: "addition" },
+    { id: 2, question: "8 - 4", answer: 4, operation: "subtraction" },
+    { id: 3, question: "3 × 4", answer: 12, operation: "multiplication" },
+    { id: 4, question: "10 ÷ 2", answer: 5, operation: "division" },
+    { id: 5, question: "3²", answer: 9, operation: "square" },
+    { id: 6, question: "√16", answer: 4, operation: "sqrt" },
+    { id: 7, question: "5 + 7", answer: 12, operation: "addition" },
+    { id: 8, question: "15 - 6", answer: 9, operation: "subtraction" },
+    { id: 9, question: "2 × 8", answer: 16, operation: "multiplication" },
+    { id: 10, question: "21 ÷ 3", answer: 7, operation: "division" }
+  ],
   
-  for (let i = 0; i < count; i++) {
-    // Ensure we get a good mix of operations
-    const operation = operations[i % operations.length];
-    questions.push(generateQuestion(operation));
+  intermediate: [
+    { id: 1, question: "15 + 28", answer: 43, operation: "addition" },
+    { id: 2, question: "42 - 17", answer: 25, operation: "subtraction" },
+    { id: 3, question: "7 × 8", answer: 56, operation: "multiplication" },
+    { id: 4, question: "84 ÷ 12", answer: 7, operation: "division" },
+    { id: 5, question: "9²", answer: 81, operation: "square" },
+    { id: 6, question: "√144", answer: 12, operation: "sqrt" },
+    { id: 7, question: "36 + 19", answer: 55, operation: "addition" },
+    { id: 8, question: "73 - 28", answer: 45, operation: "subtraction" },
+    { id: 9, question: "11 × 6", answer: 66, operation: "multiplication" },
+    { id: 10, question: "96 ÷ 8", answer: 12, operation: "division" }
+  ],
+  
+  advanced: [
+    { id: 1, question: "47 + 68", answer: 115, operation: "addition" },
+    { id: 2, question: "91 - 39", answer: 52, operation: "subtraction" },
+    { id: 3, question: "12 × 11", answer: 132, operation: "multiplication" },
+    { id: 4, question: "144 ÷ 12", answer: 12, operation: "division" },
+    { id: 5, question: "15²", answer: 225, operation: "square" },
+    { id: 6, question: "√196", answer: 14, operation: "sqrt" },
+    { id: 7, question: "58 + 77", answer: 135, operation: "addition" },
+    { id: 8, question: "84 - 46", answer: 38, operation: "subtraction" },
+    { id: 9, question: "9 × 13", answer: 117, operation: "multiplication" },
+    { id: 10, question: "132 ÷ 11", answer: 12, operation: "division" }
+  ]
+};
+
+export type QuestionMode = 'random' | 'beginner' | 'intermediate' | 'advanced';
+
+export function generateQuestions(count: number = 10, mode: QuestionMode = 'random'): Question[] {
+  if (mode === 'random') {
+    // Original random generation
+    const questions: Question[] = [];
+    const operations = ['addition', 'subtraction', 'multiplication', 'division', 'square', 'sqrt'];
+    
+    for (let i = 0; i < count; i++) {
+      const operation = operations[i % operations.length];
+      questions.push(generateQuestion(operation));
+    }
+    
+    // Shuffle the questions
+    for (let i = questions.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [questions[i], questions[j]] = [questions[j], questions[i]];
+    }
+    
+    return questions;
+  } else {
+    // Use pre-generated question set
+    const selectedSet = questionSets[mode];
+    const shuffled = [...selectedSet];
+    
+    // Shuffle the pre-generated questions
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    
+    return shuffled.slice(0, count);
   }
-  
-  // Shuffle the questions
-  for (let i = questions.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [questions[i], questions[j]] = [questions[j], questions[i]];
-  }
-  
-  return questions;
 }
 
 export function formatTime(seconds: number): string {

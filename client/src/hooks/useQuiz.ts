@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { Question, QuizResult, QuizState } from "@/types/quiz";
-import { generateQuestions } from "@/lib/quiz-utils";
+import { generateQuestions, QuestionMode } from "@/lib/quiz-utils";
 
 export function useQuiz() {
   const [state, setState] = useState<QuizState>({
@@ -16,8 +16,8 @@ export function useQuiz() {
   const [timer, setTimer] = useState(0);
   const [timerInterval, setTimerInterval] = useState<NodeJS.Timeout | null>(null);
 
-  const startQuiz = useCallback(() => {
-    const questions = generateQuestions(10);
+  const startQuiz = useCallback((mode: QuestionMode = 'random') => {
+    const questions = generateQuestions(10, mode);
     const now = Date.now();
     
     setState({

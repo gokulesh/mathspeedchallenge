@@ -1,12 +1,16 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Calculator, Plus, Minus, X, Divide } from "lucide-react";
+import { Calculator, Plus, Minus, X, Divide, Shuffle, BookOpen } from "lucide-react";
+import { QuestionMode } from "@/lib/quiz-utils";
+import { useState } from "react";
 
 interface WelcomeScreenProps {
-  onStartQuiz: () => void;
+  onStartQuiz: (mode: QuestionMode) => void;
 }
 
 export function WelcomeScreen({ onStartQuiz }: WelcomeScreenProps) {
+  const [selectedMode, setSelectedMode] = useState<QuestionMode>('random');
+
   return (
     <div className="text-center space-y-8">
       <Card className="border-4 border-primary shadow-xl">
@@ -47,13 +51,71 @@ export function WelcomeScreen({ onStartQuiz }: WelcomeScreenProps) {
               <div className="text-sm font-medium text-indigo-700">Square Roots</div>
             </div>
           </div>
+
+          {/* Question Mode Selection */}
+          <div className="mb-8">
+            <h3 className="text-lg font-semibold text-gray-700 mb-4">Choose Your Challenge:</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <button
+                onClick={() => setSelectedMode('random')}
+                className={`p-4 rounded-xl border-2 transition-all ${
+                  selectedMode === 'random'
+                    ? 'border-primary bg-blue-50 text-primary'
+                    : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                }`}
+              >
+                <Shuffle className="mx-auto mb-2" size={24} />
+                <div className="text-sm font-medium">Random</div>
+                <div className="text-xs text-gray-500">New every time</div>
+              </button>
+              
+              <button
+                onClick={() => setSelectedMode('beginner')}
+                className={`p-4 rounded-xl border-2 transition-all ${
+                  selectedMode === 'beginner'
+                    ? 'border-green-500 bg-green-50 text-green-600'
+                    : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                }`}
+              >
+                <BookOpen className="mx-auto mb-2" size={24} />
+                <div className="text-sm font-medium">Beginner</div>
+                <div className="text-xs text-gray-500">Easy questions</div>
+              </button>
+              
+              <button
+                onClick={() => setSelectedMode('intermediate')}
+                className={`p-4 rounded-xl border-2 transition-all ${
+                  selectedMode === 'intermediate'
+                    ? 'border-yellow-500 bg-yellow-50 text-yellow-600'
+                    : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                }`}
+              >
+                <BookOpen className="mx-auto mb-2" size={24} />
+                <div className="text-sm font-medium">Intermediate</div>
+                <div className="text-xs text-gray-500">Medium difficulty</div>
+              </button>
+              
+              <button
+                onClick={() => setSelectedMode('advanced')}
+                className={`p-4 rounded-xl border-2 transition-all ${
+                  selectedMode === 'advanced'
+                    ? 'border-red-500 bg-red-50 text-red-600'
+                    : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                }`}
+              >
+                <BookOpen className="mx-auto mb-2" size={24} />
+                <div className="text-sm font-medium">Advanced</div>
+                <div className="text-xs text-gray-500">Challenging</div>
+              </button>
+            </div>
+          </div>
           
           <Button 
-            onClick={onStartQuiz}
+            onClick={() => onStartQuiz(selectedMode)}
             size="lg"
             className="bg-primary hover:bg-blue-600 text-white text-xl font-bold py-6 px-12 rounded-2xl shadow-lg transition-all duration-200 transform hover:scale-105 h-auto"
           >
-            Start Quiz! 🚀
+            Start Quiz!
           </Button>
         </CardContent>
       </Card>
