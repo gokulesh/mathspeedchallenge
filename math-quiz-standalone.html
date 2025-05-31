@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Quiz for Kids - Quick Mental Math Practice</title>
+    <meta name="description" content="Fun and engaging math quiz app for kids to practice mental calculations with addition, subtraction, multiplication, division, squares and square roots. Timed practice sessions with instant feedback.">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom styles -->
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --success: #10B981;
+            --error: #EF4444;
+            --warning: #F59E0B;
+            --accent: #8B5CF6;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary:hover {
+            background-color: #3730A3;
+            transform: scale(1.05);
+        }
+        
+        .btn-secondary {
+            background-color: white;
+            color: #374151;
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: 2px solid #D1D5DB;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #F9FAFB;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 24px;
+            border: 4px solid #F3F4F6;
+        }
+        
+        .success { color: var(--success); }
+        .error { color: var(--error); }
+        .warning { color: var(--warning); }
+        .accent { color: var(--accent); }
+        
+        .border-success { border-color: var(--success); }
+        .border-error { border-color: var(--error); }
+        
+        .bg-success-light { background-color: #ECFDF5; }
+        .bg-error-light { background-color: #FEF2F2; }
+        
+        .answer-input {
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            padding: 24px;
+            border: 4px solid #D1D5DB;
+            border-radius: 16px;
+            width: 200px;
+            margin: 0 auto;
+        }
+        
+        .answer-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .hidden { display: none; }
+        
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background-color: #E5E7EB;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: var(--accent);
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans antialiased">
+
+<div id="app">
+    <!-- Welcome Screen -->
+    <div id="welcome-screen" class="min-h-screen py-8 px-4">
+        <div class="max-w-2xl mx-auto text-center">
+            <div class="card">
+                <div class="mb-8">
+                    <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4 flex items-center justify-center gap-3">
+                        <span style="font-size: 48px;">🧮</span>
+                        Math Quiz Adventure!
+                    </h1>
+                    <p class="text-xl text-gray-600 max-w-md mx-auto">
+                        Practice mental math with fun questions. You'll have 10 questions to solve as quickly as you can!
+                    </p>
+                </div>
+                
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+                    <div class="bg-blue-50 p-4 rounded-xl border-2 border-blue-200">
+                        <div class="text-blue-600 text-2xl mb-2">➕</div>
+                        <div class="text-sm font-medium text-blue-700">Addition</div>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-xl border-2 border-green-200">
+                        <div class="text-green-600 text-2xl mb-2">➖</div>
+                        <div class="text-sm font-medium text-green-700">Subtraction</div>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-xl border-2 border-purple-200">
+                        <div class="text-purple-600 text-2xl mb-2">✖️</div>
+                        <div class="text-sm font-medium text-purple-700">Multiplication</div>
+                    </div>
+                    <div class="bg-yellow-50 p-4 rounded-xl border-2 border-yellow-200">
+                        <div class="text-yellow-600 text-2xl mb-2">➗</div>
+                        <div class="text-sm font-medium text-yellow-700">Division</div>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded-xl border-2 border-red-200">
+                        <div class="text-2xl mb-2 text-red-600">x²</div>
+                        <div class="text-sm font-medium text-red-700">Squares</div>
+                    </div>
+                    <div class="bg-indigo-50 p-4 rounded-xl border-2 border-indigo-200">
+                        <div class="text-2xl mb-2 text-indigo-600">√</div>
+                        <div class="text-sm font-medium text-indigo-700">Square Roots</div>
+                    </div>
+                </div>
+                
+                <button onclick="startQuiz()" class="btn-primary text-xl py-6 px-12 rounded-2xl">
+                    Start Quiz! 🚀
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Screen -->
+    <div id="quiz-screen" class="hidden min-h-screen flex flex-col bg-gray-50">
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b-2 p-4" style="border-color: var(--primary);">
+            <div class="max-w-4xl mx-auto flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <span style="font-size: 32px;">🧮</span>
+                    <h1 class="text-2xl font-bold text-gray-800">Math Quiz</h1>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-sm font-medium text-gray-600">Question</span>
+                        <span id="current-question" class="text-white px-3 py-1 rounded-full text-sm font-bold" style="background-color: var(--primary);">1</span>
+                        <span class="text-sm text-gray-600">of</span>
+                        <span class="text-sm font-medium text-gray-600">10</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span style="color: var(--warning); font-size: 20px;">⏰</span>
+                        <span id="timer" class="text-lg font-bold text-gray-800">0.0s</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Main Content -->
+        <main class="flex-1 flex items-center justify-center p-6">
+            <div class="w-full max-w-2xl">
+                <!-- Progress Bar -->
+                <div class="mb-8">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm font-medium text-gray-600">
+                            Question <span id="progress-current">1</span> of 10
+                        </span>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-sm font-medium text-gray-600">Time:</span>
+                            <span id="progress-timer" class="text-lg font-bold px-3 py-1 rounded-full" style="color: var(--accent); background-color: #F3E8FF;">0.0s</span>
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <div id="progress-fill" class="progress-fill" style="width: 10%"></div>
+                    </div>
+                </div>
+                
+                <!-- Question Card -->
+                <div class="space-y-8">
+                    <div class="card">
+                        <div class="mb-8">
+                            <div id="question-text" class="text-6xl md:text-7xl font-bold text-gray-800 mb-6 text-center">
+                                Loading...
+                            </div>
+                            <div class="text-xl text-gray-600 text-center">What's the answer?</div>
+                        </div>
+                        
+                        <!-- Answer Input -->
+                        <div class="flex justify-center mb-8">
+                            <input
+                                id="answer-input"
+                                type="number"
+                                class="answer-input"
+                                placeholder="?"
+                                onkeypress="handleKeyPress(event)"
+                            />
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="text-center">
+                            <button id="submit-btn" onclick="submitAnswer()" class="btn-primary text-lg py-4 px-8 rounded-xl" style="background-color: var(--warning);">
+                                Check Answer
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Feedback -->
+                    <div id="feedback" class="hidden card">
+                        <div class="text-center">
+                            <div id="feedback-content" class="flex items-center justify-center space-x-2 mb-2">
+                                <!-- Feedback content will be inserted here -->
+                            </div>
+                            <div id="feedback-time" class="text-sm text-gray-600">
+                                <!-- Time will be inserted here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Navigation -->
+                    <div class="flex justify-between items-center">
+                        <button onclick="previousQuestion()" id="prev-btn" class="btn-secondary flex items-center space-x-2 py-3 px-6 rounded-xl" disabled>
+                            <span>◀️</span>
+                            <span>Previous</span>
+                        </button>
+
+                        <div class="text-gray-500 text-sm">
+                            Use <kbd class="bg-gray-100 px-2 py-1 rounded text-xs">←</kbd> and 
+                            <kbd class="bg-gray-100 px-2 py-1 rounded text-xs">→</kbd> to navigate
+                        </div>
+
+                        <button onclick="nextQuestion()" id="next-btn" class="btn-primary flex items-center space-x-2 py-3 px-6 rounded-xl" disabled>
+                            <span id="next-text">Next</span>
+                            <span>▶️</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Results Screen -->
+    <div id="results-screen" class="hidden min-h-screen py-8 px-4 bg-gray-50">
+        <div class="max-w-4xl mx-auto space-y-8">
+            <div class="text-center">
+                <h2 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4 flex items-center justify-center gap-3">
+                    <span style="font-size: 48px;">🏆</span>
+                    Quiz Complete!
+                </h2>
+                
+                <div class="card border-4 mb-8" style="border-color: var(--success);">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                        <div>
+                            <div id="final-score" class="text-3xl font-bold mb-2" style="color: var(--success);">
+                                0/10
+                            </div>
+                            <div class="text-gray-600">Correct Answers</div>
+                        </div>
+                        <div>
+                            <div id="average-time" class="text-3xl font-bold mb-2" style="color: var(--accent);">
+                                0.0s
+                            </div>
+                            <div class="text-gray-600">Average Time</div>
+                        </div>
+                        <div>
+                            <div id="total-time" class="text-3xl font-bold mb-2" style="color: var(--primary);">
+                                0.0s
+                            </div>
+                            <div class="text-gray-600">Total Time</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Results -->
+            <div class="space-y-4">
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">Question Details:</h3>
+                <div id="results-details">
+                    <!-- Results will be populated here -->
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4 pt-8">
+                <button onclick="restartQuiz()" class="btn-primary font-bold py-4 px-8 rounded-2xl">
+                    🔄 Try Again
+                </button>
+                <button onclick="goHome()" class="btn-secondary font-bold py-4 px-8 rounded-2xl">
+                    🏠 Back to Home
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Quiz State
+let currentQuestionIndex = 0;
+let questions = [];
+let results = [];
+let timer = 0;
+let timerInterval = null;
+let questionStartTime = 0;
+let hasSubmitted = false;
+
+// Question Generation Functions
+function generateQuestion(operation) {
+    const operations = ['addition', 'subtraction', 'multiplication', 'division', 'square', 'sqrt'];
+    const selectedOperation = operation || operations[Math.floor(Math.random() * operations.length)];
+    
+    let questionText;
+    let answer;
+    let id = Math.random();
+    
+    switch (selectedOperation) {
+        case 'addition': {
+            const a = Math.floor(Math.random() * 50) + 1;
+            const b = Math.floor(Math.random() * 50) + 1;
+            questionText = `${a} + ${b}`;
+            answer = a + b;
+            break;
+        }
+        
+        case 'subtraction': {
+            const a = Math.floor(Math.random() * 50) + 20;
+            const b = Math.floor(Math.random() * 20) + 1;
+            questionText = `${a} - ${b}`;
+            answer = a - b;
+            break;
+        }
+        
+        case 'multiplication': {
+            const a = Math.floor(Math.random() * 12) + 1;
+            const b = Math.floor(Math.random() * 12) + 1;
+            questionText = `${a} × ${b}`;
+            answer = a * b;
+            break;
+        }
+        
+        case 'division': {
+            const b = Math.floor(Math.random() * 12) + 1;
+            const answer_val = Math.floor(Math.random() * 12) + 1;
+            const a = b * answer_val;
+            questionText = `${a} ÷ ${b}`;
+            answer = answer_val;
+            break;
+        }
+        
+        case 'square': {
+            const base = Math.floor(Math.random() * 20) + 1;
+            questionText = `${base}²`;
+            answer = base * base;
+            break;
+        }
+        
+        case 'sqrt': {
+            const root = Math.floor(Math.random() * 20) + 1;
+            const square = root * root;
+            questionText = `√${square}`;
+            answer = root;
+            break;
+        }
+    }
+    
+    return {
+        id,
+        question: questionText,
+        answer,
+        operation: selectedOperation
+    };
+}
+
+function generateQuestions(count = 10) {
+    const newQuestions = [];
+    const operations = ['addition', 'subtraction', 'multiplication', 'division', 'square', 'sqrt'];
+    
+    for (let i = 0; i < count; i++) {
+        const operation = operations[i % operations.length];
+        newQuestions.push(generateQuestion(operation));
+    }
+    
+    // Shuffle the questions
+    for (let i = newQuestions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [newQuestions[i], newQuestions[j]] = [newQuestions[j], newQuestions[i]];
+    }
+    
+    return newQuestions;
+}
+
+function formatTime(seconds) {
+    if (seconds < 60) {
+        return `${seconds.toFixed(1)}s`;
+    } else {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        return `${minutes}:${remainingSeconds.toFixed(1).padStart(4, '0')}`;
+    }
+}
+
+// Quiz Functions
+function startQuiz() {
+    questions = generateQuestions(10);
+    results = [];
+    currentQuestionIndex = 0;
+    
+    document.getElementById('welcome-screen').classList.add('hidden');
+    document.getElementById('quiz-screen').classList.remove('hidden');
+    document.getElementById('results-screen').classList.add('hidden');
+    
+    showQuestion();
+    startQuestionTimer();
+}
+
+function showQuestion() {
+    const question = questions[currentQuestionIndex];
+    hasSubmitted = false;
+    
+    document.getElementById('question-text').textContent = question.question;
+    document.getElementById('current-question').textContent = currentQuestionIndex + 1;
+    document.getElementById('progress-current').textContent = currentQuestionIndex + 1;
+    
+    const progress = ((currentQuestionIndex + 1) / 10) * 100;
+    document.getElementById('progress-fill').style.width = `${progress}%`;
+    
+    document.getElementById('answer-input').value = '';
+    document.getElementById('answer-input').disabled = false;
+    document.getElementById('answer-input').focus();
+    
+    document.getElementById('submit-btn').classList.remove('hidden');
+    document.getElementById('feedback').classList.add('hidden');
+    
+    // Update navigation buttons
+    document.getElementById('prev-btn').disabled = currentQuestionIndex === 0;
+    document.getElementById('next-btn').disabled = true;
+    document.getElementById('next-text').textContent = currentQuestionIndex === 9 ? 'Finish' : 'Next';
+}
+
+function startQuestionTimer() {
+    if (timerInterval) {
+        clearInterval(timerInterval);
+    }
+    
+    questionStartTime = Date.now();
+    timer = 0;
+    
+    timerInterval = setInterval(() => {
+        timer = (Date.now() - questionStartTime) / 1000;
+        document.getElementById('timer').textContent = formatTime(timer);
+        document.getElementById('progress-timer').textContent = formatTime(timer);
+    }, 100);
+}
+
+function stopQuestionTimer() {
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+    return timer;
+}
+
+function submitAnswer() {
+    const userAnswer = parseInt(document.getElementById('answer-input').value);
+    const question = questions[currentQuestionIndex];
+    
+    if (isNaN(userAnswer)) {
+        alert('Please enter a valid number!');
+        return;
+    }
+    
+    const timeSpent = stopQuestionTimer();
+    const isCorrect = userAnswer === question.answer;
+    
+    const result = {
+        questionNumber: currentQuestionIndex + 1,
+        question: question.question,
+        userAnswer,
+        correctAnswer: question.answer,
+        isCorrect,
+        timeSpent,
+        operation: question.operation
+    };
+    
+    results.push(result);
+    hasSubmitted = true;
+    
+    // Show feedback
+    showFeedback(isCorrect, timeSpent, question.answer);
+    
+    // Hide submit button and enable next
+    document.getElementById('submit-btn').classList.add('hidden');
+    document.getElementById('answer-input').disabled = true;
+    document.getElementById('next-btn').disabled = false;
+    
+    // Auto-advance after 2 seconds
+    setTimeout(() => {
+        nextQuestion();
+    }, 2000);
+}
+
+function showFeedback(isCorrect, timeSpent, correctAnswer) {
+    const feedback = document.getElementById('feedback');
+    const content = document.getElementById('feedback-content');
+    const timeElement = document.getElementById('feedback-time');
+    
+    feedback.classList.remove('hidden');
+    
+    if (isCorrect) {
+        feedback.style.borderColor = 'var(--success)';
+        feedback.style.backgroundColor = '#ECFDF5';
+        content.innerHTML = `
+            <span style="color: var(--success); font-size: 24px;">✅</span>
+            <span class="text-lg font-semibold" style="color: var(--success);">🎉 Correct! Great job!</span>
+        `;
+    } else {
+        feedback.style.borderColor = 'var(--error)';
+        feedback.style.backgroundColor = '#FEF2F2';
+        content.innerHTML = `
+            <span style="color: var(--error); font-size: 24px;">❌</span>
+            <span class="text-lg font-semibold" style="color: var(--error);">Not quite right. The answer is ${correctAnswer}</span>
+        `;
+    }
+    
+    timeElement.textContent = `Time taken: ${timeSpent.toFixed(1)}s`;
+}
+
+function nextQuestion() {
+    if (currentQuestionIndex < questions.length - 1) {
+        currentQuestionIndex++;
+        showQuestion();
+        startQuestionTimer();
+    } else {
+        finishQuiz();
+    }
+}
+
+function previousQuestion() {
+    if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        showQuestion();
+        startQuestionTimer();
+    }
+}
+
+function finishQuiz() {
+    stopQuestionTimer();
+    showResults();
+}
+
+function showResults() {
+    document.getElementById('quiz-screen').classList.add('hidden');
+    document.getElementById('results-screen').classList.remove('hidden');
+    
+    // Calculate summary
+    const correctAnswers = results.filter(r => r.isCorrect).length;
+    const totalTime = results.reduce((sum, r) => sum + r.timeSpent, 0);
+    const averageTime = totalTime / results.length;
+    
+    document.getElementById('final-score').textContent = `${correctAnswers}/10`;
+    document.getElementById('average-time').textContent = formatTime(averageTime);
+    document.getElementById('total-time').textContent = formatTime(totalTime);
+    
+    // Show detailed results
+    const detailsContainer = document.getElementById('results-details');
+    detailsContainer.innerHTML = '';
+    
+    results.forEach((result, index) => {
+        const resultCard = document.createElement('div');
+        resultCard.className = 'card';
+        resultCard.style.borderLeft = `4px solid ${result.isCorrect ? 'var(--success)' : 'var(--error)'}`;
+        
+        resultCard.innerHTML = `
+            <div class="flex justify-between items-center">
+                <div class="flex-1">
+                    <div class="text-xl font-semibold text-gray-800 mb-1">
+                        Question ${result.questionNumber}: ${result.question} = ${result.correctAnswer}
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-2">
+                            <span style="color: ${result.isCorrect ? 'var(--success)' : 'var(--error)'}; font-size: 20px;">
+                                ${result.isCorrect ? '✅' : '❌'}
+                            </span>
+                            <span class="font-medium" style="color: ${result.isCorrect ? 'var(--success)' : 'var(--error)'}">
+                                ${result.isCorrect ? 'Correct' : 'Incorrect'}
+                            </span>
+                        </div>
+                        <span class="text-gray-600">
+                            Your answer: <span class="font-medium">${result.userAnswer}</span>
+                        </span>
+                        ${!result.isCorrect ? `
+                            <span class="text-gray-600">
+                                Correct: <span class="font-medium" style="color: var(--success)">${result.correctAnswer}</span>
+                            </span>
+                        ` : ''}
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="text-2xl font-bold text-gray-800">
+                        ${formatTime(result.timeSpent)}
+                    </div>
+                    <div class="text-sm text-gray-500">Time taken</div>
+                </div>
+            </div>
+        `;
+        
+        detailsContainer.appendChild(resultCard);
+    });
+}
+
+function restartQuiz() {
+    startQuiz();
+}
+
+function goHome() {
+    document.getElementById('quiz-screen').classList.add('hidden');
+    document.getElementById('results-screen').classList.add('hidden');
+    document.getElementById('welcome-screen').classList.remove('hidden');
+    
+    // Reset state
+    currentQuestionIndex = 0;
+    questions = [];
+    results = [];
+    timer = 0;
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+}
+
+// Event Handlers
+function handleKeyPress(event) {
+    if (event.key === 'Enter') {
+        if (!hasSubmitted) {
+            submitAnswer();
+        } else {
+            nextQuestion();
+        }
+    }
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+    const isQuizActive = !document.getElementById('quiz-screen').classList.contains('hidden');
+    if (!isQuizActive) return;
+    
+    if (e.key === 'ArrowLeft' && currentQuestionIndex > 0) {
+        e.preventDefault();
+        previousQuestion();
+    } else if (e.key === 'ArrowRight' && hasSubmitted) {
+        e.preventDefault();
+        nextQuestion();
+    }
+});
+
+// Initialize the app
+document.addEventListener('DOMContentLoaded', () => {
+    goHome();
+});
+</script>
+
+</body>
+</html>

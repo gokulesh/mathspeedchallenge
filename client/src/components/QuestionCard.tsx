@@ -50,6 +50,11 @@ export function QuestionCard({
     const result = onSubmitAnswer(answer);
     setFeedback(result);
     setHasSubmitted(true);
+    
+    // Auto-advance to next question after showing feedback
+    setTimeout(() => {
+      onNextQuestion();
+    }, 2000);
   };
 
   const handleNext = () => {
@@ -62,7 +67,11 @@ export function QuestionCard({
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
-      handleNext();
+      if (!hasSubmitted) {
+        handleSubmit();
+      } else {
+        onNextQuestion();
+      }
     }
   };
 
