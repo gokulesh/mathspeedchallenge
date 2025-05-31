@@ -35,9 +35,12 @@ export function QuestionCard({
     setUserAnswer("");
     setFeedback(null);
     setHasSubmitted(false);
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
+    // Use setTimeout to ensure the input is rendered before focusing
+    setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    }, 100);
   }, [question.id]);
 
   const handleSubmit = () => {
