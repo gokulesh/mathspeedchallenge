@@ -96,7 +96,7 @@ export function QuestionCard({
               onChange={(e) => setUserAnswer(e.target.value)}
               onKeyPress={handleKeyPress}
               className="text-4xl font-bold text-center py-6 px-6 border-4 border-gray-200 rounded-2xl focus:border-primary h-auto text-gray-800"
-              placeholder="?"
+              placeholder="Enter answer here"
               disabled={hasSubmitted}
             />
           </div>
